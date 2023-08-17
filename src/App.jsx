@@ -12,7 +12,6 @@ export default function App() {
   
   function handleKeyDown(e) {
     if (!inputRef.current) {return null}
-    e.preventDefault()
     
     if(!e.key.match(/[0-9]/) 
       && e.key !== "Backspace" 
@@ -23,10 +22,9 @@ export default function App() {
       && e.key !== "ArrowDown"
       && !e.ctrlKey
     ) { return e.preventDefault() }
-
-
+    e.preventDefault()
     const target = e.nativeEvent.target
-    
+  
     let sel = {
       start: target.selectionStart ?? 0, 
       end: target.selectionEnd ?? 0
@@ -48,26 +46,23 @@ export default function App() {
     inputRef.current.selectionEnd = sel.end + 1
     inputRef.current.selectionStart = sel.end + 1
   }
+  
 
   const formatNumber = (num) => {
     return BigInt(num.replace(/\D+/g, "")).toLocaleString("en");
   };
 
   function handleChange() {
-
+    console.log("jea")
   }
 
   return (
+    <>
       <input     
-        onKeyDown={handleKeyDown}
-        onChange={handleChange}
-        ref={inputRef}
+      onKeyDown={handleKeyDown}
+      onChange={handleChange}
+      ref={inputRef}
       />
-  );
+    </>
+    );
 }
-
-
-
-
-
-
