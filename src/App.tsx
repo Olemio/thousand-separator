@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './index.css'
 
 
@@ -7,7 +7,7 @@ const App: React.FC = () => {
     const inputField2 = useRef<string>('')
     const [numberValue, setNumberValue] = useState<number[]>([])
     const [inputValue, setInputValue] = useState('')
-    const [keyPressed, setKeyPressed] = useState(String)
+    const [keyPressed, setKeyPressed] = useState('')
     const [mousePos, setMousePos] = useState<number[]>([0, 0])
 
     // Connect to translator so that the regex, toLoStr and separator is determined by the users language.
@@ -26,41 +26,23 @@ const App: React.FC = () => {
         // Make each number each own item in the NumberValue array.
         const parsedNumbers = numberSplit.map(Number);
         setNumberValue(parsedNumbers);
-
-        console.log("Numberverdi: " + numberValue)
-
-        
-        if (keyPressed === 'Backspace') {
-            event.preventDefault()
-            //delete the number in 'numberValue' relative to the mouse position minus the commas in the thousand separated value. 
-
-            let minus = 0
-
-            if (mousePos[0] <= 4) {
-                minus = 2
-                for (let i = 0; i < (inputValue.split(ENGLISH.separator).length - minus); i++ ) {
-                    numberValue.splice((mousePos[0] - inputValue.split(ENGLISH.separator).length) + i, 1)
-                }
-            } else if (mousePos[0] <= 7) {
-                console.log()
-                // LEGG TIL SHIT HERRRRRRRRRRRRRRR
-            }
-            else {
-                alert("Noe funka ikke")
-            }
-
-
-            console.log("NY NUMBER VALUE ETTER BACKSPACE: " + numberValue)
-            console.log("JOIN(): " + numberValue.join(''))
-            console.log("NY NUMMER ETTER BACKSPACE PT2: " + Number(numberValue.join('')).toLocaleString(ENGLISH.toLoStr))
-            // Delay function by 10 millisec otherwise it won't work for some reason.
-            setTimeout(() => {
-                setInputValue(Number(numberValue.join('')).toLocaleString(ENGLISH.toLoStr)); 
-                console.log("NY VERDIIIII: " + inputValue)
-            }, 10);
-        }
-
     }
+
+
+
+    useEffect(() => {
+        if (keyPressed === 'Backspace') {
+            // Delete the number in 'numberValue' relative to the mouse position minus the commas in the thousand separated value. 
+            numberValue.splice(mousePos[0] - inputValue.split(ENGLISH.separator).length + 1, 1)
+
+            setInputValue(Number(numberValue.join('')).toLocaleString(ENGLISH.toLoStr));
+        }
+        // setKeyPressed value to blank to avoid loop
+        setKeyPressed('')
+    }, [ENGLISH.separator, ENGLISH.toLoStr, inputValue, keyPressed, mousePos, numberValue])
+
+
+
     // Track the cursor in the inputfield.
     const trackMouse = (event: React.MouseEvent<HTMLInputElement>) => {
         // Variables for SelectionStart and SelectionEnd.
@@ -68,18 +50,22 @@ const App: React.FC = () => {
         const selEnd = Number(event.currentTarget.selectionEnd)
         // Store Mouse Position so you can use it in a different function.
         setMousePos([selStart, selEnd])
+        console.log(mousePos)
         console.log(inputValue)
     }
 
     function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         // Record what key is being pressed and store it in a state for later use in an external function.
         setKeyPressed(event.key)
-        console.log("event key ONKEYDOWN: " + event.key)
+
+        if (event.key === 'Backspace') {
+            event.preventDefault()
+        }
     }
 
     function onChange(event: React.ChangeEvent<HTMLInputElement>) {
         // Store userinput in a state
-         setInputValue(Number(event.currentTarget.value.replace(ENGLISH.regex, '')).toLocaleString(ENGLISH.toLoStr))
+        setInputValue(Number(event.currentTarget.value.replace(ENGLISH.regex, '')).toLocaleString(ENGLISH.toLoStr))
     }
 
 
