@@ -17,8 +17,8 @@ const App: React.FC = () => {
         separator: ','
     }
 
-    const handleOnInput = async (event: React.KeyboardEvent<HTMLInputElement>) => {
 
+    const handleOnInput = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         // Get input value from inputfield
         inputField2.current = (event.currentTarget.value)
         // Get input, remove separator from input and separate each number.
@@ -29,11 +29,12 @@ const App: React.FC = () => {
     }
 
 
+    let commas = 0
 
     useEffect(() => {
         if (keyPressed === 'Backspace') {
             // Delete the number in 'numberValue' relative to the mouse position minus the commas in the thousand separated value. 
-            numberValue.splice(mousePos[0] - inputValue.split(ENGLISH.separator).length + 1, 1)
+            numberValue.splice(mousePos[0] - inputValue.split(ENGLISH.separator).length + commas, 1)
 
             setInputValue(Number(numberValue.join('')).toLocaleString(ENGLISH.toLoStr));
         }
@@ -54,6 +55,7 @@ const App: React.FC = () => {
         console.log(inputValue)
     }
 
+
     function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         // Record what key is being pressed and store it in a state for later use in an external function.
         setKeyPressed(event.key)
@@ -62,6 +64,7 @@ const App: React.FC = () => {
             event.preventDefault()
         }
     }
+
 
     function onChange(event: React.ChangeEvent<HTMLInputElement>) {
         // Store userinput in a state
